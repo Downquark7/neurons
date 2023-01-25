@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 //generated with help from chatgpt
 public class XORNeuralNetwork
 {
@@ -8,14 +10,18 @@ public class XORNeuralNetwork
     private double[] bias1 = new double[2];
     private double bias2;
     private double learningRate = 0.1;
-    private int numEpochs = 100000;
+    private int numEpochs = 10000;
 
     public static void main(String[] args)
     {
-        XORNeuralNetwork nn = new XORNeuralNetwork();
-        nn.initWeights();
-        nn.train();
-        nn.predict();
+        for (int i = 0; i < 100; i++)
+        {
+            XORNeuralNetwork nn = new XORNeuralNetwork();
+            nn.initWeights();
+            nn.train();
+//        nn.predict();
+            System.out.printf("%d\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\n", nn.correct(), nn.weights1[0][0], nn.weights1[0][1], nn.weights1[1][0], nn.weights1[1][1], nn.weights2[0], nn.weights2[1], nn.bias1[0], nn.bias1[1], nn.bias2);
+        }
     }
 
     private void initWeights()
@@ -96,7 +102,25 @@ public class XORNeuralNetwork
                 hidden[j] = sigmoid(input[i][0] * weights1[0][j] + input[i][1] * weights1[1][j] + bias1[j]);
             }
             prediction = sigmoid(hidden[0] * weights2[0] + hidden[1] * weights2[1] + bias2);
-            System.out.println("Expected: " + output[i] + ", Prediction: " + prediction);
+            System.out.printf("Expected: %f, Prediction: %.3f\n", output[i], prediction);
         }
+    }
+
+    private int correct()
+    {
+        int count = 0;
+        for (int i = 0; i < input.length; i++)
+        {
+            double[] hidden = new double[2];
+            double prediction = 0;
+            for (int j = 0; j < 2; j++)
+            {
+                hidden[j] = sigmoid(input[i][0] * weights1[0][j] + input[i][1] * weights1[1][j] + bias1[j]);
+            }
+            prediction = sigmoid(hidden[0] * weights2[0] + hidden[1] * weights2[1] + bias2);
+            if (Math.abs(prediction - output[i]) < 0.5)
+                count++;
+        }
+        return count;
     }
 }
